@@ -1,0 +1,11 @@
+Installation VirtualBox over Ubuntu 20.04
+
+Step1: sudo apt install virtualbox
+Step2: virtualbox
+
+
+Command   : sudo apt install virtualbox
+Error     : E: dpkg was interrupted, you must manually run 'sudo dpkg --configure -a' to correct the problem. 
+Solution  : 
+  sudo dpkg -r virtualbox
+  sudo apt-get update && sudo apt-get -f install
