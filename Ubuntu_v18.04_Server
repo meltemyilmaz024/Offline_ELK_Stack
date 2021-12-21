@@ -1,0 +1,51 @@
+
+Directory layout of RPMedit
+The RPM places config files, logs, and the data directory in the appropriate locations for an RPM-based system:
+
+
+Type      : home | Elasticsearch home directory or $ES_HOME
+Location  : /usr/share/elasticsearch
+
+Type      : bin : Binary scripts including elasticsearch to start a node and elasticsearch-plugin to install plugins
+Location  : /usr/share/elasticsearch/bin
+
+Type      : conf : Configuration files including elasticsearch.yml
+Location  : /etc/elasticsearch | ES_PATH_CONF
+
+Type      : conf : Environment variables including heap size, file descriptors.
+Location  : /etc/sysconfig/elasticsearch
+
+Type      : data : The location of the data files of each index / shard allocated on the node. Can hold multiple locations.
+Location  : /var/lib/elasticsearch | path.data
+
+Type      : logs : Log files location.
+Location  : /var/log/elasticsearch | path.logs
+
+Type      : plugins : Plugin files location. Each plugin will be contained in a subdirectory.
+Location  : /usr/share/elasticsearch/plugins
+
+Type      : repo : Shared file system repository locations. Can hold multiple locations. 
+                  A file system repository can be placed in to any subdirectory of any directory specified here.
+Location  : Not configured | path.repo
+
+Configuring Elasticsearch
+
+Config files location
+
+Elasticsearch has three configuration files:
+
+ * elasticsearch.yml for configuring Elasticsearch
+ * jvm.options for configuring Elasticsearch JVM settings
+ * log4j2.properties for configuring Elasticsearch logging
+ 
+ For the archive distributions, the config directory location defaults to $ES_HOME/config. 
+ The location of the config directory can be changed via the ES_PATH_CONF environment variable as follows:
+    * ES_PATH_CONF=/path/to/my/config ./bin/elasticsearch
+    
+Config file format
+The configuration format is YAML. Here is an example of changing the path of the data and logs directories:
+
+  path:
+      data: /var/lib/elasticsearch
+      logs: /var/log/elasticsearch
+ 
