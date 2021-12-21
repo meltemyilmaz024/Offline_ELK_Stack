@@ -1,7 +1,7 @@
+based on elastic.co: https://www.elastic.co/guide/en/elasticsearch/reference/6.8/rpm.html#rpm-repo
 
-Directory layout of RPMedit
+### Directory layout of RPM
 The RPM places config files, logs, and the data directory in the appropriate locations for an RPM-based system:
-
 
 Type      : home | Elasticsearch home directory or $ES_HOME
 Location  : /usr/share/elasticsearch
@@ -48,4 +48,44 @@ The configuration format is YAML. Here is an example of changing the path of the
   path:
       data: /var/lib/elasticsearch
       logs: /var/log/elasticsearch
+      
+ Environment variable substitution
+    Environment variables referenced with the ${...} notation within the configuration file will be replaced with the value of the environment variable. 
+    For example: 
+      node.name:    ${HOSTNAME}
+      network.host: ${ES_NETWORK_HOST}
+      
+ Promting for Settings
+ 
+ For settings that you do not wish to store in the configuration file, you can use the value ${prompt.text} or ${prompt.secret} and start Elasticsearch in the foreground. 
+ ${prompt.secret} has echoing disabled so that the value entered will not be shown in your terminal;
+ ${prompt.text} will allow you to see the value as you type it in. For example:
+ 
+ node:
+  name: ${prompt.text}
+  
+ When starting Elasticsearch, you will be prompted to enter the actual value like so:
+
+    Enter value for [node.name]:
+    
+  Values for environment variables must be simple strings.
+    export HOSTNAME=“host1,host2
+   
+  Cluster and node setting types
+    Dynamic : You can configure and update dynamic settings on a running cluster using the cluster update settings API.
+    Static  : Static settings can only be configured on an unstarted or shut down node using elasticsearch.yml.
+    
+    (*) Static settings must be set on every relevant node in the cluster.
+   
+  Important Elasticsearch configuration : https://www.elastic.co/guide/en/elasticsearch/reference/6.8/system-config.html
+    1. Disable swapping
+      Disable all swap files : sudo swapoff -a
+      (*) To disable it permanently, you will need to edit the /etc/fstab file and comment out any lines that contain the word swap.
+    2. Increasefile descriptors
+    3. Ensure sufficient virtual memory
+    4. Ensure sufficient threads
+    5. JVM DNS cache settings
+    6. Temporary directory not mounted with noexec
+  
+
  
