@@ -235,5 +235,34 @@ stg@es7:~$ sudo wget -P /etc/logstash/conf.d https://raw.githubusercontent.com/c
 
 	2022-02-01 12:16:13 (1.80 MB/s) - ‘/etc/logstash/conf.d/csv-read.conf’ saved [444/444]
 
+stg@es7:~$ cat /etc/logstash/conf.d/csv-read.conf
+	input {
+	  file {
+	    path => "/home/student/csv-data/csv-schema-short-numerical.csv"
+	    start_position => "beginning"
+	    sincedb_path => "/dev/null"
+	  }
+	}
+	filter {
+	  csv {
+	      separator => ","
+	      skip_header => "true"
+	      columns => ["id","timestamp","paymentType","name","gender","ip_address","purpose","country","age"]
+	  }
+	}
+	output {
+	   elasticsearch {
+	     hosts => "http://localhost:9200"
+	     index => "demo-csv"
+	  }
 
+	stdout {}
+
+	}
+	
+	
+	
+	
+	
+	
 
