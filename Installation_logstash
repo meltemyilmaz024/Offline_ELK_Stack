@@ -261,7 +261,200 @@ stg@es7:~$ cat /etc/logstash/conf.d/csv-read.conf
 	}
 	
 	
-	
+	stg@es7:~$ sudo /usr/share/logstash/bin/logstash -f /etc/logstash/conf.d/csv-read.conf
+	Using bundled JDK: /usr/share/logstash/jdk
+	OpenJDK 64-Bit Server VM warning: Option UseConcMarkSweepGC was deprecated in version 9.0 and will likely be removed in a future release.
+	WARNING: Could not find logstash.yml which is typically located in $LS_HOME/config or /etc/logstash. You can specify the path using --path.settings. Continuing using the defaults
+	Could not find log4j2 configuration at path /usr/share/logstash/config/log4j2.properties. Using default config which logs errors to the console
+	[INFO ] 2022-02-01 12:26:18.742 [main] runner - Starting Logstash {"logstash.version"=>"7.16.3", "jruby.version"=>"jruby 9.2.20.1 (2.5.8) 2021-11-30 2a2962fbd1 OpenJDK 64-Bit Server VM 11.0.13+8 on 11.0.13+8 +indy +jit [linux-x86_64]"}
+	......
+	[INFO ] 2022-02-01 12:26:29.048 [[main]<file] observingtail - START, creating Discoverer, Watch with file and sincedb collections
+	[WARN ] 2022-02-01 12:26:29.649 [[main]<file] plain - Relying on default value of `pipeline.ecs_compatibility`, which may change in a future major release of Logstash. To avoid unexpected changes when upgrading Logstash, please explicitly declare your desired ECS Compatibility mode.
+	{
+			   "name" => "Giovanna Van der Linde",
+			   "path" => "/home/stg/csv-data/csv-schema-short-numerical.csv",
+				 "id" => "1",
+			"message" => "1,2019-08-29T01:53:12Z,Amex,Giovanna Van der Linde,Female,185.216.194.245,Industrial,Philippines,55\r",
+		   "@version" => "1",
+		 "@timestamp" => 2022-02-01T12:26:29.744Z,
+		  "timestamp" => "2019-08-29T01:53:12Z",
+		 "ip_address" => "185.216.194.245",
+				"age" => "55",
+		"paymentType" => "Amex",
+			"country" => "Philippines",
+			   "host" => "es7",
+			 "gender" => "Female",
+			"purpose" => "Industrial"
+	}
+	{
+			   "name" => "Rod Edelmann",
+			   "path" => "/home/stg/csv-data/csv-schema-short-numerical.csv",
+				 "id" => "2",
+			"message" => "2,2019-11-16T14:55:13Z,Mastercard,Rod Edelmann,Male,131.61.251.254,Clothing,China,32\r",
+		   "@version" => "1",
+		 "@timestamp" => 2022-02-01T12:26:29.746Z,
+		  "timestamp" => "2019-11-16T14:55:13Z",
+		 "ip_address" => "131.61.251.254",
+				"age" => "32",
+		"paymentType" => "Mastercard",
+			"country" => "China",
+			   "host" => "es7",
+			 "gender" => "Male",
+			"purpose" => "Clothing"
+	}
+....
+
+
+stg@es7:~$ curl -XGET localhost:9200/demo-csv/_search?pretty=true
+{
+  "took" : 1,
+  "timed_out" : false,
+  "_shards" : {
+    "total" : 1,
+    "successful" : 1,
+    "skipped" : 0,
+    "failed" : 0
+  },
+  "hits" : {
+    "total" : {
+      "value" : 4,
+      "relation" : "eq"
+    },
+    "max_score" : 1.0,
+    "hits" : [
+      {
+        "_index" : "demo-csv",
+        "_type" : "_doc",
+        "_id" : "l2NAtX4BaYgaFNOjMjKy",
+        "_score" : 1.0,
+        "_source" : {
+          "name" : "Giovanna Van der Linde",
+          "path" : "/home/stg/csv-data/csv-schema-short-numerical.csv",
+          "id" : "1",
+          "message" : "1,2019-08-29T01:53:12Z,Amex,Giovanna Van der Linde,Female,185.216.194.245,Industrial,Philippines,55\r",
+          "@version" : "1",
+          "@timestamp" : "2022-02-01T12:26:29.744Z",
+          "timestamp" : "2019-08-29T01:53:12Z",
+          "ip_address" : "185.216.194.245",
+          "age" : "55",
+          "paymentType" : "Amex",
+          "country" : "Philippines",
+          "host" : "es7",
+          "gender" : "Female",
+          "purpose" : "Industrial"
+        }
+      },
+.....
+
+stg@es7:~$ sudo wget -P /etc/logstash/conf.d https://raw.githubusercontent.com/coralogix-resources/elk-course-samples/master/csv-read-drop.conf
+--2022-02-01 12:30:53--  https://raw.githubusercontent.com/coralogix-resources/elk-course-samples/master/csv-read-drop.conf
+Resolving raw.githubusercontent.com (raw.githubusercontent.com)... 185.199.110.133, 185.199.108.133, 185.199.111.133, ...
+Connecting to raw.githubusercontent.com (raw.githubusercontent.com)|185.199.110.133|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 594 [text/plain]
+Saving to: ‘/etc/logstash/conf.d/csv-read-drop.conf’
+
+csv-read-drop.conf                                100%[=============================================================================================================>]     594  --.-KB/s    in 0s
+
+2022-02-01 12:30:54 (3.67 MB/s) - ‘/etc/logstash/conf.d/csv-read-drop.conf’ saved [594/594]
+
+
+stg@es7:~$ sudo /usr/share/logstash/bin/logstash -f /etc/logstash/conf.d/csv-read-drop.conf
+Using bundled JDK: /usr/share/logstash/jdk
+OpenJDK 64-Bit Server VM warning: Option UseConcMarkSweepGC was deprecated in version 9.0 and will likely be removed in a future release.
+WARNING: Could not find logstash.yml which is typically located in $LS_HOME/config or /etc/logstash. You can specify the path using --path.settings. Continuing using the defaults
+Could not find log4j2 configuration at path /usr/share/logstash/config/log4j2.properties. Using default config which logs errors to the console
+[INFO ] 2022-02-01 12:35:29.716 [main] runner - Starting Logstash {"logstash.version"=>"7.16.3", "jruby.version"=>"jruby 9.2.20.1 (2.5.8) 2021-11-30 2a2962fbd1 OpenJDK 64-Bit Server VM 11.0.13+8 on 11.0.13+8 +indy +jit [linux-x86_64]"}
+..
+[INFO ] 2022-02-01 12:35:41.148 [[main]<file] observingtail - START, creating Discoverer, Watch with file and sincedb collections
+[WARN ] 2022-02-01 12:35:41.809 [[main]<file] plain - Relying on default value of `pipeline.ecs_compatibility`, which may change in a future major release of Logstash. To avoid unexpected changes when upgrading Logstash, please explicitly declare your desired ECS Compatibility mode.
+{
+           "name" => "Giovanna Van der Linde",
+        "country" => "Philippines",
+             "id" => "1",
+         "gender" => "Female",
+    "paymentType" => "Amex",
+            "age" => 55,
+      "timestamp" => "2019-08-29T01:53:12Z",
+     "ip_address" => "185.216.194.245",
+        "purpose" => "Industrial"
+}
+{
+           "name" => "Rod Edelmann",
+        "country" => "China",
+             "id" => "2",
+         "gender" => "Male",
+    "paymentType" => "Mastercard",
+            "age" => 32,
+      "timestamp" => "2019-11-16T14:55:13Z",
+     "ip_address" => "131.61.251.254",
+        "purpose" => "Clothing"
+}
+....
+
+stg@es7:~$ curl -XGET "http://localhost:9200/demo-csv-drop/_mapping/field/age?pretty=true"
+{
+  "demo-csv-drop" : {
+    "mappings" : {
+      "age" : {
+        "full_name" : "age",
+        "mapping" : {
+          "age" : {
+            "type" : "long"
+          }
+        }
+      }
+    }
+  }
+}
+
+
+stg@es7:~$ mkdir json-data
+stg@es7:~$ cd json-data/
+stg@es7:~/json-data$ wget http://media.sundog-soft.com/es/sample-json.log
+
+stg@es7:/etc/logstash/conf.d$ sudo /usr/share/logstash/bin/logstash -f json-read.conf
+Using bundled JDK: /usr/share/logstash/jdk
+OpenJDK 64-Bit Server VM warning: Option UseConcMarkSweepGC was deprecated in version 9.0 and will likely be removed in a future release.
+WARNING: Could not find logstash.yml which is typically located in $LS_HOME/config or /etc/logstash. You can specify the path using --path.settings. Continuing using the defaults
+Could not find log4j2 configuration at path /usr/share/logstash/config/log4j2.properties. Using default config which logs errors to the console
+[INFO ] 2022-02-01 13:04:07.186 [main] runner - Starting Logstash {"logstash.version"=>"7.16.3", "jruby.version"=>"jruby 9.2.20.1 (2.5.8) 2021-11-30 2a2962fbd1 OpenJDK 64-Bit Server VM 11.0.13+8 on 11.0.13+8 +indy +jit [linux-x86_64]"}
+[WARN ] 2022-02-01 13:04:07.838 [LogStash::Runner] multilocal - Ignoring the 'pipelines.yml' file because modules or command line options are specified
+...
+[WARN ] 2022-02-01 13:04:17.511 [[main]<file] plain - Relying on default value of `pipeline.ecs_compatibility`, which may change in a future major release of Logstash. To avoid unexpected changes when upgrading Logstash, please explicitly declare your desired ECS Compatibility mode.
+{
+           "name" => "Merrill Duffield",
+     "@timestamp" => 2022-02-01T13:04:17.592Z,
+             "id" => 1,
+           "host" => "es7",
+        "message" => "{\"id\":1,\"timestamp\":\"2019-09-12T13:43:42Z\",\"paymentType\":\"Amex\",\"name\":\"Merrill Duffield\",\"gender\":\"Female\",\"ip_address\":\"132.150.218.21\",\"purpose\":\"Toys\",\"country\":\"United Arab Emirates\",\"age\":33}",
+    "paymentType" => "Amex",
+         "gender" => "Female",
+           "path" => "/home/stg/json-data/sample-json.log",
+        "country" => "United Arab Emirates",
+     "ip_address" => "132.150.218.21",
+            "age" => 33,
+       "@version" => "1",
+        "purpose" => "Toys",
+      "timestamp" => "2019-09-12T13:43:42Z"
+}
+{
+           "name" => "Darby Dacks",
+     "@timestamp" => 2022-02-01T13:04:17.644Z,
+             "id" => 2,
+           "host" => "es7",
+        "message" => "{\"id\":2,\"timestamp\":\"2019-08-11T17:55:56Z\",\"paymentType\":\"Visa\",\"name\":\"Darby Dacks\",\"gender\":\"Female\",\"ip_address\":\"77.72.239.47\",\"purpose\":\"Shoes\",\"country\":\"Poland\",\"age\":55}",
+    "paymentType" => "Visa",
+         "gender" => "Female",
+           "path" => "/home/stg/json-data/sample-json.log",
+        "country" => "Poland",
+     "ip_address" => "77.72.239.47",
+            "age" => 55,
+       "@version" => "1",
+        "purpose" => "Shoes",
+      "timestamp" => "2019-08-11T17:55:56Z"
+}
+
 	
 	
 	
