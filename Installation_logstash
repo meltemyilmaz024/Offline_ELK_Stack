@@ -1,0 +1,15 @@
+stg@es7:~/packages$ shasum -a 512 -c logstash-7.16.3-amd64.deb.sha512
+	logstash-7.16.3-amd64.deb: OK
+
+stg@es7:~/packages$ sudo dpkg -i logstash-7.16.3-amd64.deb
+	Selecting previously unselected package logstash.
+	(Reading database ... 91273 files and directories currently installed.)
+	Preparing to unpack logstash-7.16.3-amd64.deb ...
+	Unpacking logstash (1:7.16.3-1) ...
+	Setting up logstash (1:7.16.3-1) ...
+	Using bundled JDK: /usr/share/logstash/jdk
+	Using provided startup.options file: /etc/logstash/startup.options
+	OpenJDK 64-Bit Server VM warning: Option UseConcMarkSweepGC was deprecated in version 9.0 and will likely be removed in a future release.
+	/usr/share/logstash/vendor/bundle/jruby/2.5.0/gems/pleaserun-0.0.32/lib/pleaserun/platform/base.rb:112: warning: constant ::Fixnum is deprecated
+	Successfully created system startup script for Logstash
+
