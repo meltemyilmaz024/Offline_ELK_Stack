@@ -28,3 +28,22 @@ yellow open   shakespare                 gOXLMAmQTn6gAh-u_wAAKA   1   1         
 yellow open   logstash-2022.02.01-000001 QZhIJt8kT_qxUt-zTddnig   1   1     102972            0     28.1mb         28.1mb
 
 stg@es7:/usr/share/logstash$ curl -XGET '127.0.0.1:9200/logstash-2022.02.01-000001/_search?pretty'
+
+stg@es7:~$ ls -l
+total 75872
+-rw-rw-r-- 1 stg stg 23200421 Feb  1 09:55 access_log
+drwxrwxr-x 2 stg stg     4096 Jan 31 06:47 bin
+-rw-rw-r-- 1 stg stg    12187 Jan 28 13:08 data-generator-master.zip
+-rw-rw-r-- 1 stg stg      985 Jan 31 10:42 IndexRatings.py
+-rw-rw-r-- 1 stg stg      985 Feb  1 04:58 IndexTags.py
+drwxr-xr-x 2 stg stg     4096 Oct 17  2016 ml-latest-small
+-rw-rw-r-- 1 stg stg   918269 Jan 28 13:07 ml-latest-small.zip
+-rw-rw-r-- 1 stg stg  1331031 Jan 31 08:59 moremovies.json
+-rw-rw-r-- 1 stg stg      844 Jan 31 08:36 movies.json
+-rw-rw-r-- 1 stg stg      748 Jan 31 08:57 MoviesToJson.py
+drwxrwxr-x 6 stg stg     4096 Jan 28 13:10 my_env
+drwxr-xr-x 4 stg stg     4096 Jan 28  2019 mysql-connector-java-8.0.15
+-rw-rw-r-- 1 stg stg  6686365 Feb  1 10:37 mysql-connector-java-8.0.15.zip
+drwxrwxr-x 2 stg stg     4096 Feb  1 05:17 packages
+-rw-rw-r-- 1 stg stg      215 Jan 31 05:38 shakes-mapping.json
+-rw-rw-r-- 1 stg stg 25327465 Jan 31 05:58 shakespeare_7.0.json
