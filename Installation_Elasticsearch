@@ -1,0 +1,206 @@
+Ubuntu Server 18.04 - ElasticSearch Installations
+-------------------------------------------------
+
+Download and install the Debian package manually
+------------------------------------------------
+Link-1: https://www.elastic.co/downloads/elasticsearch	(DEB & SHA Files)
+Link-2: https://www.elastic.co/downloads/logstash 		(DEB & SHA Files)
+Link-3: https://www.elastic.co/downloads/kibana 		(DEB & SHA Files)
+
+
+Link-4: https://sundog-education.com/elasticsearch/
+Link-5: http://media.sundog-soft.com/es7/shakes-mapping.json
+Link-6: http://media.sundog-soft.com/es7/shakespeare_7.0.json
+Link-7: http://media.sundog-soft.com/es/access_log
+
+
+stg@es7:~$ sudo apt-key add packages/GPG-KEY-elasticsearch
+OK
+
+stg@es7:~$ sudo apt-get install apt-transport-https
+
+
+stg@es7:~$ echo "deb https://artifacts.elastic.co/packages/7.x/apt stable main" | sudo tee /etc/apt/sources.list.d/elastic-7.x.list
+deb https://artifacts.elastic.co/packages/7.x/apt stable main
+
+Download and install the Debian package manually
+
+The Debian package for Elasticsearch v7.16.3 can be downloaded from the website and installed as follows:
+
+	wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.16.3-amd64.deb
+	wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.16.3-amd64.deb.sha512
+	shasum -a 512 -c elasticsearch-7.16.3-amd64.deb.sha512 
+	sudo dpkg -i elasticsearch-7.16.3-amd64.deb
+	
+
+stg@es7:~/packages$ shasum -a 512 -c elasticsearch-7.16.3-amd64.deb.sha512
+	elasticsearch-7.16.3-amd64.deb: OK
+
+stg@es7:~/packages$ sudo dpkg -i elasticsearch-7.16.3-amd64.deb
+	Selecting previously unselected package elasticsearch.
+	(Reading database ... 90148 files and directories currently installed.)
+	Preparing to unpack elasticsearch-7.16.3-amd64.deb ...
+	Creating elasticsearch group... OK
+	Creating elasticsearch user... OK
+	Unpacking elasticsearch (7.16.3) ...
+	Setting up elasticsearch (7.16.3) ...
+	### NOT starting on installation, please execute the following statements to configure elasticsearch service to start automatically using systemd
+	 sudo systemctl daemon-reload
+	 sudo systemctl enable elasticsearch.service
+	### You can start elasticsearch service by executing
+	 sudo systemctl start elasticsearch.service
+	Created elasticsearch keystore in /etc/elasticsearch/elasticsearch.keystore
+	Processing triggers for ureadahead (0.100.0-21) ...
+	Processing triggers for systemd (237-3ubuntu10.52) ...
+	
+Running Elasticsearch with SysV init
+
+	Use the update-rc.d command to configure Elasticsearch to start automatically when the system boots up:
+
+	sudo update-rc.d elasticsearch defaults 95 10
+
+Elasticsearch can be started and stopped using the service command:
+
+	sudo -i service elasticsearch start
+	sudo -i service elasticsearch stop
+
+
+stg@es7:~$ sudo update-rc.d elasticsearch defaults 95 10
+stg@es7:~$ sudo -i service elasticsearch start
+
+stg@es7:~$ sudo nano /etc/elasticsearch/elasticsearch.yml
+
+stg@es7:~$ sudo /bin/systemctl daemon-reload
+
+stg@es7:~$ sudo /bin/systemctl enable elasticsearch.service
+	Synchronizing state of elasticsearch.service with SysV service script with /lib/systemd/systemd-sysv-install.
+	Executing: /lib/systemd/systemd-sysv-install enable elasticsearch
+	Created symlink /etc/systemd/system/multi-user.target.wants/elasticsearch.service → /usr/lib/systemd/system/elasticsearch.service.
+
+
+stg@es7:~$ curl -XGET 127.0.0.1:9200
+{
+  "name" : "node-1",
+  "cluster_name" : "elasticsearch",
+  "cluster_uuid" : "yJUM38mkTrGz4S7D1sEQ6Q",
+  "version" : {
+    "number" : "7.16.3",
+    "build_flavor" : "default",
+    "build_type" : "deb",
+    "build_hash" : "4e6e4eab2297e949ec994e688dad46290d018022",
+    "build_date" : "2022-01-06T23:43:02.825887787Z",
+    "build_snapshot" : false,
+    "lucene_version" : "8.10.1",
+    "minimum_wire_compatibility_version" : "6.8.0",
+    "minimum_index_compatibility_version" : "6.0.0-beta1"
+  },
+  "tagline" : "You Know, for Search"
+}
+
+
+stg@es7:~$ curl -H "Content-Type: application/json" -XPUT 127.0.0.1:9200/shakespeare --data-binary @shakes-mapping.json
+	{"acknowledged":true,"shards_acknowledged":true,"index":"shakespeare"}
+	
+Link: https://sundog-education.com/elasticsearch/ 
+
+Install the Shakespeare Search Index in Elasticsearch 7: wget 
+
+-------------------
+
+curl -H 'Content-Type: application/json' -XPUT 127.0.0.1:9200/shakespeare 
+--data-binary @shakes-mapping.json
+
+wget http://media.sundog-soft.com/es7/shakespeare_7.0.json
+
+curl -H 'Content-Type: application/json' -XPOST
+'127.0.0.1:9200/shakespeare/_bulk?pretty' --data-binary
+@shakespeare_7.0.json
+
+curl -H 'Content-Type: application/json' -XGET
+'127.0.0.1:9200/shakespeare/_search?pretty' -d '
+{
+	"query" : {
+		"match_phrase" : {
+			"text_entry" : "to be or not to be"
+			}
+		}
+}'
+
+-------------------
+
+stg@es7:~$ mkdir bin
+stg@es7:~$ cd bin
+stg@es7:~/bin$ nano curl
+stg@es7:~/bin$ chmod a+x curl
+stg@es7:~/bin$ cd ~
+stg@es7:~$ ls
+bin                                         
+
+stg@es7:~$ which curl
+/usr/bin/curl
+
+stg@es7:~$ source .profile
+
+stg@es7:~$ which curl
+/home/stg/bin/curl
+
+stg@es7:~$ curl -XPUT 127.0.0.1:9200/movies -d '
+{
+	"mappings": {
+		"properties": {
+			"year":{
+			"type":"date"
+			}
+		}
+	}
+}'
+
+{"acknowledged":true,"shards_acknowledged":true,"index":"movies"}
+
+stg@es7:~$ curl -XGET 127.0.0.1:9200/movies/_mapping
+{"movies":{"mappings":{"properties":{"year":{"type":"date"}}}}}s
+
+
+stg@es7:~$ curl -XPOST 127.0.0.1:9200/movies/_doc/109487 -d '
+{
+	"genre": ["IMAX", "Sci-Fi"],
+	"title":"Interstellar",
+	"year": 2014
+}'
+
+{"_index":"movies","_type":"_doc","_id":"109487","_version":1,"result":"created","_shards":{"total":2,"successful":1,"failed":0},"_seq_no":0,"_primary_term":1}
+
+stg@es7:~$ curl -XGET 127.0.0.1:9200/movies/_search?pretty
+{
+  "took" : 236,
+  "timed_out" : false,
+  "_shards" : {
+    "total" : 1,
+    "successful" : 1,
+    "skipped" : 0,
+    "failed" : 0
+  },
+  "hits" : {
+    "total" : {
+      "value" : 1,
+      "relation" : "eq"
+    },
+    "max_score" : 1.0,
+    "hits" : [
+      {
+        "_index" : "movies",
+        "_type" : "_doc",
+        "_id" : "109487",
+        "_score" : 1.0,
+        "_source" : {
+          "genre" : [
+            "IMAX",
+            "Sci-Fi"
+          ],
+          "title" : "Interstellar",
+          "year" : 2014
+        }
+      }
+    ]
+  }
+}
