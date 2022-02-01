@@ -13,3 +13,18 @@ stg@es7:~/packages$ sudo dpkg -i logstash-7.16.3-amd64.deb
 	/usr/share/logstash/vendor/bundle/jruby/2.5.0/gems/pleaserun-0.0.32/lib/pleaserun/platform/base.rb:112: warning: constant ::Fixnum is deprecated
 	Successfully created system startup script for Logstash
 
+stg@es7:~$ cd /usr/share/logstash/
+	
+stg@es7:/usr/share/logstash$ sudo nano /etc/logstash/conf.d/logstash.conf
+
+stg@es7:/usr/share/logstash$ sudo bin/logstash -f /etc/logstash/conf.d/logstash.conf
+
+stg@es7:/usr/share/logstash$ curl  -XGET 127.0.0.1:9200/_cat/indices?v
+health status index                      uuid                   pri rep docs.count docs.deleted store.size pri.store.size
+yellow open   movies                     kfpAEzVCQjKjXCf43P3IZg   1   1       9125            0        1mb            1mb
+yellow open   ratings                    YYjdtkj1Tm-WjX80XHJ_Vg   1   1     100004            0     10.2mb         10.2mb
+yellow open   shakespeare                ASqX8xOLQqSpG3S6lyDocw   1   1     111396            0     19.2mb         19.2mb
+yellow open   shakespare                 gOXLMAmQTn6gAh-u_wAAKA   1   1          0            0       226b           226b
+yellow open   logstash-2022.02.01-000001 QZhIJt8kT_qxUt-zTddnig   1   1     102972            0     28.1mb         28.1mb
+
+stg@es7:/usr/share/logstash$ curl -XGET '127.0.0.1:9200/logstash-2022.02.01-000001/_search?pretty'
