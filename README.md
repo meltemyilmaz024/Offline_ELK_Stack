@@ -1,4 +1,4 @@
-# Offline Installation for ELK Stack on Ubuntu 18.04 Server
+# Offline Installation for ELK Stack on Ubuntu Server 18.04
 
 ## ElasticSearch & Logstash & Kibana & Filebeat ( 7.16.3 )
 
