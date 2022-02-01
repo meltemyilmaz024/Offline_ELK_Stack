@@ -1,8 +1,6 @@
-# ElasticSearch & Logstash & Kibana & Filebeat ( 7.16.3 )
+# Offline Installation for ELK Stack on Ubuntu 18.04 Server
 
-## Ubuntu_v18.04_Server : Offline Installation for ELK Stack on Ubuntu 18.04 Server
-
-
+## ElasticSearch & Logstash & Kibana & Filebeat ( 7.16.3 )
 
 ## Sources ##
 Link1: Sundog Education by Frank Kane - Elasticsearch 7 and the Elastic Stack: In Depth and Hands On (UDEMY)
