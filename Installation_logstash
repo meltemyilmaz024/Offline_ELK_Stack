@@ -47,3 +47,193 @@ drwxr-xr-x 4 stg stg     4096 Jan 28  2019 mysql-connector-java-8.0.15
 drwxrwxr-x 2 stg stg     4096 Feb  1 05:17 packages
 -rw-rw-r-- 1 stg stg      215 Jan 31 05:38 shakes-mapping.json
 -rw-rw-r-- 1 stg stg 25327465 Jan 31 05:58 shakespeare_7.0.json
+
+--------------
+ 
+OFFLINE MySQL Installations :
+ 
+https://dev.mysql.com/downloads/mysql/
+
+- DEB Package, MySQL Server	8.0.28	63.4K	-  (mysql-server_8.0.28-1ubuntu18.04_amd64.deb) -- https://dev.mysql.com/downloads/file/?id=509789
+
+---------------
+
+stg@es7:~$ sudo apt-get install mysql-server
+
+stg@es7:~$ sudo mysql -u root -p
+Enter password:  					---> password
+
+mysql> CREATE DATABASE movielens;
+Query OK, 1 row affected (0.00 sec)
+
+mysql> CREATE TABLE movielens.movies(
+    -> movieID INT PRIMARY KEY NOT NULL,
+    -> title TEXT,
+    -> releaseDate DATE
+    -> );
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> LOAD DATA LOCAL INFILE 'ml-100k/u.item' INTO TABLE movielens.movies FIELDS TERMINATED BY '|' (movieID, title, @var3) set releaseDate = STR_TO_DATE(@var3, '%d-%M-%Y');
+	Query OK, 1682 rows affected, 1683 warnings (0.02 sec)
+	Records: 1682  Deleted: 0  Skipped: 0  Warnings: 1683
+
+mysql> USE movielens;
+	Reading table information for completion of table and column names
+	You can turn off this feature to get a quicker startup with -A
+
+	Database changed
+
+mysql> Select * FROM movies WHERE title LIKE 'Star%';
++---------+------------------------------------------------+-------------+
+| movieID | title                                          | releaseDate |
++---------+------------------------------------------------+-------------+
+|      50 | Star Wars (1977)                               | 1977-01-01  |
+|      62 | Stargate (1994)                                | 1994-01-01  |
+|     222 | Star Trek: First Contact (1996)                | 1996-11-22  |
+|     227 | Star Trek VI: The Undiscovered Country (1991)  | 1991-01-01  |
+|     228 | Star Trek: The Wrath of Khan (1982)            | 1982-01-01  |
+|     229 | Star Trek III: The Search for Spock (1984)     | 1984-01-01  |
+|     230 | Star Trek IV: The Voyage Home (1986)           | 1986-01-01  |
+|     271 | Starship Troopers (1997)                       | 1997-01-01  |
+|     380 | Star Trek: Generations (1994)                  | 1994-01-01  |
+|     449 | Star Trek: The Motion Picture (1979)           | 1979-01-01  |
+|     450 | Star Trek V: The Final Frontier (1989)         | 1989-01-01  |
+|    1068 | Star Maker, The (Uomo delle stelle, L') (1995) | 1996-03-01  |
+|    1265 | Star Maps (1997)                               | 1997-01-01  |
+|    1293 | Star Kid (1997)                                | 1998-01-16  |
+|    1464 | Stars Fell on Henrietta, The (1995)            | 1995-01-01  |
++---------+------------------------------------------------+-------------+
+15 rows in set (0.01 sec)
+
+
+Platform Independent (Architecture Independent), ZIP Archive -- (mysql-connector-java-8.0.28.zip)
+https://dev.mysql.com/downloads/file/?id=509728
+
+stg@es7:~$ sudo mysql -uroot -p
+Enter password:
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 3
+Server version: 5.7.36-0ubuntu0.18.04.1 (Ubuntu)
+
+Copyright (c) 2000, 2021, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql>
+mysql> CREATE USER 'student'@'localhost' IDENTIFIED BY 'password';
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> GRANT ALL PRIVILEGES ON *.* TO 'student'@'localhost';
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> FLUSH PRIVILEGES;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> exit
+Bye
+stg@es7:~$ cd /usr/share/logstash/
+
+
+stg@es7:/usr/share/logstash$ sudo bin/logstash -f /etc/logstash/conf.d/mysql.conf
+
+Using bundled JDK: /usr/share/logstash/jdk
+OpenJDK 64-Bit Server VM warning: Option UseConcMarkSweepGC was deprecated in version 9.0 and will likely be removed in a future release.
+WARNING: Could not find logstash.yml which is typically located in $LS_HOME/config or /etc/logstash. You can specify the path using --path.settings. Continuing using the defaults
+.....
+[INFO ] 2022-02-01 11:56:57.123 [Agent thread] agent - Pipelines running {:count=>1, :running_pipelines=>[:main], :non_running_pipelines=>[]}
+
+Loading class `com.mysql.jdbc.Driver'. This is deprecated. The new driver class is `com.mysql.cj.jdbc.Driver'. 
+The driver is automatically registered via the SPI and manual loading of the driver class is generally unnecessary.
+
+[INFO ] 2022-02-01 11:56:59.238 [[main]<jdbc] jdbc - (0.178552s) SELECT * FROM movies
+{"title":"Toy Story (1995)","releasedate":"1995-01-01T00:00:00.000Z","movieid":1,"@version":"1","@timestamp":"2022-02-01T11:56:59.331Z"}
+{"title":"GoldenEye (1995)","releasedate":"1995-01-01T00:00:00.000Z","movieid":2,"@version":"1","@timestamp":"2022-02-01T11:56:59.347Z"}
+{"title":"Four Rooms (1995)","releasedate":"1995-01-01T00:00:00.000Z","movieid":3,"@version":"1","@timestamp":"2022-02-01T11:56:59.352Z"}
+{"title":"Get Shorty (1995)","releasedate":"1995-01-01T00:00:00.000Z","movieid":4,"@version":"1","@timestamp":"2022-02-01T11:56:59.354Z"}
+{"title":"Copycat (1995)","releasedate":"1995-01-01T00:00:00.000Z","movieid":5,"@version":"1","@timestamp":"2022-02-01T11:56:59.354Z"}
+....
+
+stg@es7:/usr/share/logstash$ curl -XGET 'localhost:9200/movielens-sql/_search?q=title:Star&pretty'
+
+{
+  "took" : 14,
+  "timed_out" : false,
+  "_shards" : {
+    "total" : 1,
+    "successful" : 1,
+    "skipped" : 0,
+    "failed" : 0
+  },
+  "hits" : {
+    "total" : {
+      "value" : 14,
+      "relation" : "eq"
+    },
+    "max_score" : 5.2609296,
+    "hits" : [
+      {
+        "_index" : "movielens-sql",
+        "_type" : "_doc",
+        "_id" : "NmMltX4BaYgaFNOjLyzU",
+        "_score" : 5.2609296,
+        "_source" : {
+          "title" : "Star Wars (1977)",
+          "releasedate" : "1977-01-01T00:00:00.000Z",
+          "movieid" : 50,
+          "@version" : "1",
+          "@timestamp" : "2022-02-01T11:56:59.410Z"
+        }
+      },
+      {
+        "_index" : "movielens-sql",
+        "_type" : "_doc",
+        "_id" : "gGMltX4BaYgaFNOjLyzU",
+        "_score" : 5.2609296,
+        "_source" : {
+          "title" : "Lone Star (1996)",
+          "releasedate" : "1996-06-21T00:00:00.000Z",
+          "movieid" : 124,
+          "@version" : "1",
+          "@timestamp" : "2022-02-01T11:56:59.499Z"
+        }
+      },
+.....
+
+
+stg@es7:~/csv-data$ curl -O https://raw.githubusercontent.com/coralogix-resources/elk-course-samples/master/csv-schema-numerical.csv; cd -;
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100    14  100    14    0     0     23      0 --:--:-- --:--:-- --:--:--    23
+/home/stg/csv-data
+
+
+stg@es7:~/csv-data$ curl -O https://raw.githubusercontent.com/coralogix-resources/elk-course-samples/master/csv-schema-short-numerical.csv; cd -;
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   518  100   518    0     0   1099      0 --:--:-- --:--:-- --:--:--  1097
+/home/stg/csv-data
+
+stg@es7:~/csv-data$ ls -l
+total 8
+-rw-rw-r-- 1 stg stg  14 Feb  1 12:10 csv-schema-numerical.csv
+-rw-rw-r-- 1 stg stg 518 Feb  1 12:08 csv-schema-short-numerical.csv
+
+stg@es7:~$ sudo wget -P /etc/logstash/conf.d https://raw.githubusercontent.com/coralogix-resources/elk-course-samples/master/csv-read.conf
+	[sudo] password for stg:
+	--2022-02-01 12:16:13--  https://raw.githubusercontent.com/coralogix-resources/elk-course-samples/master/csv-read.conf
+	Resolving raw.githubusercontent.com (raw.githubusercontent.com)... 185.199.110.133, 185.199.108.133, 185.199.111.133, ...
+	Connecting to raw.githubusercontent.com (raw.githubusercontent.com)|185.199.110.133|:443... connected.
+	HTTP request sent, awaiting response... 200 OK
+	Length: 444 [text/plain]
+	Saving to: ‘/etc/logstash/conf.d/csv-read.conf’
+
+	csv-read.conf                                     100%[========================================================================>]     444  --.-KB/s    in 0s
+
+	2022-02-01 12:16:13 (1.80 MB/s) - ‘/etc/logstash/conf.d/csv-read.conf’ saved [444/444]
+
+
+
