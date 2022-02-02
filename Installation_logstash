@@ -415,13 +415,8 @@ stg@es7:~/json-data$ wget http://media.sundog-soft.com/es/sample-json.log
 
 stg@es7:/etc/logstash/conf.d$ sudo /usr/share/logstash/bin/logstash -f json-read.conf
 Using bundled JDK: /usr/share/logstash/jdk
-OpenJDK 64-Bit Server VM warning: Option UseConcMarkSweepGC was deprecated in version 9.0 and will likely be removed in a future release.
-WARNING: Could not find logstash.yml which is typically located in $LS_HOME/config or /etc/logstash. You can specify the path using --path.settings. Continuing using the defaults
-Could not find log4j2 configuration at path /usr/share/logstash/config/log4j2.properties. Using default config which logs errors to the console
-[INFO ] 2022-02-01 13:04:07.186 [main] runner - Starting Logstash {"logstash.version"=>"7.16.3", "jruby.version"=>"jruby 9.2.20.1 (2.5.8) 2021-11-30 2a2962fbd1 OpenJDK 64-Bit Server VM 11.0.13+8 on 11.0.13+8 +indy +jit [linux-x86_64]"}
-[WARN ] 2022-02-01 13:04:07.838 [LogStash::Runner] multilocal - Ignoring the 'pipelines.yml' file because modules or command line options are specified
 ...
-[WARN ] 2022-02-01 13:04:17.511 [[main]<file] plain - Relying on default value of `pipeline.ecs_compatibility`, which may change in a future major release of Logstash. To avoid unexpected changes when upgrading Logstash, please explicitly declare your desired ECS Compatibility mode.
+To avoid unexpected changes when upgrading Logstash, please explicitly declare your desired ECS Compatibility mode.
 {
            "name" => "Merrill Duffield",
      "@timestamp" => 2022-02-01T13:04:17.592Z,
@@ -455,7 +450,217 @@ Could not find log4j2 configuration at path /usr/share/logstash/config/log4j2.pr
       "timestamp" => "2019-08-11T17:55:56Z"
 }
 
-	
-	
-	
+stg@es7:/etc/logstash/conf.d$ curl localhost:9200/demo-json/_search?pretty=true
+{
+  "took" : 1,
+  "timed_out" : false,
+  "_shards" : {
+    "total" : 1,
+    "successful" : 1,
+    "skipped" : 0,
+    "failed" : 0
+  },
+  "hits" : {
+    "total" : {
+      "value" : 5,
+      "relation" : "eq"
+    },
+    "max_score" : 1.0,
+    "hits" : [
+      {
+        "_index" : "demo-json",
+        "_type" : "_doc",
+        "_id" : "n2NitX4BaYgaFNOjzTIK",
+        "_score" : 1.0,
+        "_source" : {
+          "name" : "Merrill Duffield",
+          "@timestamp" : "2022-02-01T13:04:17.592Z",
+          "id" : 1,
+          "host" : "es7",
+          "message" : "{\"id\":1,\"timestamp\":\"2019-09-12T13:43:42Z\",\"paymentType\":\"Amex\",\"name\":\"Merrill Duffield\",\"gender\":\"Female\",\"ip_address\":\"132.150.218.21\",\"purpose\":\"Toys\",\"country\":\"United Arab Emirates\",\"age\":33}",
+          "paymentType" : "Amex",
+          "gender" : "Female",
+          "path" : "/home/stg/json-data/sample-json.log",
+          "country" : "United Arab Emirates",
+          "ip_address" : "132.150.218.21",
+          "age" : 33,
+          "@version" : "1",
+          "purpose" : "Toys",
+          "timestamp" : "2019-09-12T13:43:42Z"
+        }
+      },
+.....
 
+
+http://media.sundog-soft.com/es/sample.log
+
+http://media.sundog-soft.com/es/grok-example.conf
+
+
+stg@es7:~/03-grok-examples$ nano grok-example.conf
+
+stg@es7:~/03-grok-examples$ sudo mv grok-example.conf /etc/logstash/conf.d/
+[sudo] password for stg:
+
+stg@es7:~/03-grok-examples$ cd /etc/logstash/conf.d/
+
+stg@es7:/etc/logstash/conf.d$ sudo nano grok-example.conf
+
+stg@es7:/etc/logstash/conf.d$ less grok-example.conf
+
+stg@es7:/etc/logstash/conf.d$ sudo /usr/share/logstash/bin/logstash -f /etc/logstash/conf.d/grok-example.conf
+
+	Using bundled JDK: /usr/share/logstash/jdk
+	..
+	To avoid unexpected changes when upgrading Logstash, please explicitly declare your desired ECS Compatibility mode.
+	{
+			  "path" => "/home/stg/03-grok-examples/sample.log",
+		  "logLevel" => "INFO",
+		  "@version" => "1",
+		   "message" => "2020-10-11T09:49:35Z INFO variable server value is tomcat",
+		"logMessage" => "variable server value is tomcat",
+		"@timestamp" => 2022-02-02T08:13:49.296Z,
+			  "host" => "es7",
+			  "time" => "2020-10-11T09:49:35Z"
+	}
+	{
+			  "path" => "/home/stg/03-grok-examples/sample.log",
+		  "logLevel" => "ERROR",
+		  "@version" => "1",
+		   "message" => "2020-03-14T22:50:34Z ERROR cannot find the requested resource",
+		"logMessage" => "cannot find the requested resource",
+		"@timestamp" => 2022-02-02T08:13:49.344Z,
+			  "host" => "es7",
+			  "time" => "2020-03-14T22:50:34Z"
+	}
+
+
+
+stg@es7:/etc/logstash/conf.d$ curl -XGET "http://localhost:9200/demo-grok/_search?pretty=true" -d '             
+{
+"_source":[
+"logLevel",
+"time",
+"logMessage"] 
+}'
+
+{
+  "took" : 2,
+  "timed_out" : false,
+  "_shards" : {
+    "total" : 1,
+    "successful" : 1,
+    "skipped" : 0,
+    "failed" : 0
+  },
+  "hits" : {
+    "total" : {
+      "value" : 4,
+      "relation" : "eq"
+    },
+    "max_score" : 1.0,
+    "hits" : [
+      {
+        "_index" : "demo-grok",
+        "_type" : "_doc",
+        "_id" : "p2N_uX4BaYgaFNOjOjKT",
+        "_score" : 1.0,
+        "_source" : {
+          "logLevel" : "INFO",
+          "logMessage" : "variable server value is tomcat",
+          "time" : "2020-10-11T09:49:35Z"
+        }
+      },
+      {
+        "_index" : "demo-grok",
+        "_type" : "_doc",
+        "_id" : "qGN_uX4BaYgaFNOjOjKT",
+        "_score" : 1.0,
+        "_source" : {
+          "logLevel" : "ERROR",
+          "logMessage" : "cannot find the requested resource",
+          "time" : "2020-03-14T22:50:34Z"
+        }
+      },
+.....
+
+stg@es7:~/03-grok-examples$ nano sample.log
+
+------------------------/ sample.log /---------------------------
+2020-10-11T09:49:35Z INFO variable server value is tomcat
+2020-03-14T22:50:34Z ERROR cannot find the requested resource
+2020-01-02T14:58:40Z INFO initializing the bootup
+2020-06-04T06:56:04Z DEBUG initializing checksum
+2020-05-07T03:07:11Z INFO variable server value is tomcat
+55.12.32.134 GET /user/id/properties								--------> ADDING NEW LINE
+------------------------/ sample.log /---------------------------
+
+
+stg@es7:~/03-grok-examples$ curl -XDELETE "http://localhost:9200/demo-grok"
+{"acknowledged":true}
+
+stg@es7:~/03-grok-examples$ sudo /usr/share/logstash/bin/logstash -f /etc/logstash/conf.d/grok-example.conf
+	[sudo] password for stg:
+	Using bundled JDK: /usr/share/logstash/jdk
+	.......
+	ase explicitly declare your desired ECS Compatibility mode.
+	{
+		"@timestamp" => 2022-02-02T08:34:30.905Z,
+		"logMessage" => "variable server value is tomcat",
+		  "@version" => "1",
+			  "path" => "/home/stg/03-grok-examples/sample.log",
+		   "message" => "2020-10-11T09:49:35Z INFO variable server value is tomcat",
+			  "host" => "es7",
+			  "time" => "2020-10-11T09:49:35Z",
+		  "logLevel" => "INFO"
+	}
+	{
+		"@timestamp" => 2022-02-02T08:34:30.947Z,
+		"logMessage" => "cannot find the requested resource",
+		  "@version" => "1",
+			  "path" => "/home/stg/03-grok-examples/sample.log",
+		   "message" => "2020-03-14T22:50:34Z ERROR cannot find the requested resource",
+			  "host" => "es7",
+			  "time" => "2020-03-14T22:50:34Z",
+		  "logLevel" => "ERROR"
+	}
+	{
+		"@timestamp" => 2022-02-02T08:34:30.953Z,
+		"logMessage" => "initializing the bootup",
+		  "@version" => "1",
+			  "path" => "/home/stg/03-grok-examples/sample.log",
+		   "message" => "2020-01-02T14:58:40Z INFO initializing the bootup",
+			  "host" => "es7",
+			  "time" => "2020-01-02T14:58:40Z",
+		  "logLevel" => "INFO"
+	}
+	{
+		"@timestamp" => 2022-02-02T08:34:30.953Z,
+		"logMessage" => "initializing checksum",
+		  "@version" => "1",
+			  "path" => "/home/stg/03-grok-examples/sample.log",
+		   "message" => "2020-06-04T06:56:04Z DEBUG initializing checksum",
+			  "host" => "es7",
+			  "time" => "2020-06-04T06:56:04Z",
+		  "logLevel" => "DEBUG"
+	}
+	{
+		"@timestamp" => 2022-02-02T08:34:30.954Z,
+		"logMessage" => "variable server value is tomcat",
+		  "@version" => "1",
+			  "path" => "/home/stg/03-grok-examples/sample.log",
+		   "message" => "2020-05-07T03:07:11Z INFO variable server value is tomcat",
+			  "host" => "es7",
+			  "time" => "2020-05-07T03:07:11Z",
+		  "logLevel" => "INFO"
+	}
+	{
+		"@timestamp" => 2022-02-02T08:34:30.955Z,
+		  "@version" => "1",
+			  "path" => "/home/stg/03-grok-examples/sample.log",
+		   "message" => "55.12.32.134 GET /user/id/properties",
+			  "host" => "es7",
+			  "tags" => [
+			[0] "_grokparsefailure" 												------> GROK PARSE FAILURE
+		]
+	}
