@@ -664,3 +664,21 @@ stg@es7:~/03-grok-examples$ sudo /usr/share/logstash/bin/logstash -f /etc/logsta
 			[0] "_grokparsefailure" 												------> GROK PARSE FAILURE
 		]
 	}
+	
+	
+http://media.sundog-soft.com/es/grok-example-02.conf
+
+stg@es7:~/03-grok-examples$ nano grok-example-02.conf
+
+stg@es7:~/03-grok-examples$ sudo mv grok-example-02.conf /etc/logstash/conf.d/
+
+stg@es7:~/03-grok-examples$ sudo /usr/share/logstash/bin/logstash -f /etc/logstash/conf.d/grok-example-02.conf
+
+stg@es7:~/03-grok-examples$ curl -XGET "http://localhost:9200/demo-grok-multiple/_search?pretty" -d ' {
+"_source": {
+"excludes": [
+"@timestamp",
+"host",
+"path" ]
+}
+}'
