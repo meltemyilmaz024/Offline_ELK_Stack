@@ -1,0 +1,15 @@
+
+Elasticsearch_error: flood stage disk watermark exceeded
+
+By default, Elasticsearch installed goes into read-only mode when you have less than 5% of free disk space. If you see errors similar to this:
+
+Elasticsearch::Transport::Transport::Errors::Forbidden: [403] {"error":{"root_cause":[{"type":"cluster_block_exception","reason":"blocked by: [FORBIDDEN/12/index read-only / allow delete (api)];"}],"type":"cluster_block_exception","reason":"blocked by: [FORBIDDEN/12/index read-only / allow delete (api)];"},"status":403}
+
+Or in /usr/local/var/log/elasticsearch.log you can see logs similar to:
+
+flood stage disk watermark [95%] exceeded on [nCxquc7PTxKvs6hLkfonvg][nCxquc7][/usr/local/var/lib/elasticsearch/nodes/0] free: 15.3gb[4.1%], all indices on this node will be marked read-only
+
+Then you can fix it by running the following commands:
+
+curl -XPUT -H "Content-Type: application/json" http://localhost:9200/_cluster/settings -d '{ "transient": { "cluster.routing.allocation.disk.threshold_enabled": false } }'
+curl -XPUT -H "Content-Type: application/json" http://localhost:9200/_all/_settings -d '{"index.blocks.read_only_allow_delete": null}'
